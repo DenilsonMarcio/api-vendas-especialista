@@ -76,15 +76,15 @@ public class UsuarioController {
         return usuarioService.listaUsuario();
     }
 
-    @PatchMapping("/reset")
+    @PatchMapping("/reset/{id}/{login}")
     @ApiOperation("Resetar senha do Usuario")
     @ApiResponses({ @ApiResponse(code = 200, message = "OK"), 
                     @ApiResponse(code = 401, message = "Não autorizado"),
                     @ApiResponse(code = 403, message = "Token não autenticado")
                  })
-    public void resetaSenha(@PathVariable String login, @PathVariable Integer id, @RequestBody @Valid UsuarioResetaSenhaDTO dto) {
-        Usuario usuario = new Usuario();
-        if (usuarioService.loginIsValid(login)) {
+    public void resetaSenha(@PathVariable Integer id, @PathVariable String login, @RequestBody @Valid UsuarioResetaSenhaDTO dto) {
+        Usuario usuario = usuarioService.loginIsValid(login);
+        if (usuario.getId().equals(id)) {
             usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
             usuarioService.salvar(usuario);
         } else {

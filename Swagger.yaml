@@ -1,0 +1,740 @@
+swagger: '2.0'
+info:
+  description: 'Clone da Api do projeto de Vendas do Professor Dougllas Sousa (http://github.com/cursodsousa)'
+  version: 1.0.1
+  title: Vendas API
+  contact:
+    name: Denilson Marcio
+    url: 'https://github.com/DenilsonMarcio'
+    email: denilson.santos7@fatec.sp.gov.br
+host: 'localhost:8080'
+basePath: /
+tags:
+  - name: cliente-controller
+    description: Cliente Controller
+  - name: pedido-controller
+    description: Pedido Controller
+  - name: produto-controller
+    description: Produto Controller
+  - name: usuario-controller
+    description: Usuario Controller
+paths:
+  /api/v1/clientes:
+    get:
+      tags:
+        - cliente-controller
+      summary: Lista todos os clientes
+      operationId: findUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: cpf
+          in: query
+          required: false
+          type: string
+        - name: id
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: nome
+          in: query
+          required: false
+          type: string
+        - name: 'pedidos[0].cliente.cpf'
+          in: query
+          required: false
+          type: string
+        - name: 'pedidos[0].cliente.id'
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: 'pedidos[0].cliente.nome'
+          in: query
+          required: false
+          type: string
+        - name: 'pedidos[0].dataPedido'
+          in: query
+          required: false
+          type: string
+          format: date
+        - name: 'pedidos[0].id'
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: 'pedidos[0].itens[0].id'
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: 'pedidos[0].itens[0].produto.descricao'
+          in: query
+          required: false
+          type: string
+        - name: 'pedidos[0].itens[0].produto.id'
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: 'pedidos[0].itens[0].produto.preco'
+          in: query
+          required: false
+          type: number
+        - name: 'pedidos[0].itens[0].quantidade'
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: 'pedidos[0].status'
+          in: query
+          required: false
+          type: string
+          enum:
+            - REALIZADO
+            - CANCELADO
+            - PENDENTE
+            - AGUARDANDO_PAGAMENTO
+        - name: 'pedidos[0].total'
+          in: query
+          required: false
+          type: number
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Cliente'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+    post:
+      tags:
+        - cliente-controller
+      summary: Salva um novo cliente
+      operationId: saveUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: cliente
+          description: cliente
+          required: true
+          schema:
+            $ref: '#/definitions/Cliente'
+      responses:
+        '201':
+          description: Cliente salvo com sucesso
+          schema:
+            $ref: '#/definitions/Cliente'
+        '400':
+          description: Erro de validação
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  '/api/v1/clientes/{id}':
+    get:
+      tags:
+        - cliente-controller
+      summary: Obter detalhes de um cliente
+      operationId: getClienteByIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Cliente encontrado
+          schema:
+            $ref: '#/definitions/Cliente'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Cliente não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+    put:
+      tags:
+        - cliente-controller
+      summary: Altera os dados de um cliente
+      operationId: updateUsingPUT
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: cliente
+          description: cliente
+          required: true
+          schema:
+            $ref: '#/definitions/Cliente'
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '204':
+          description: Atualizado
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Cliente não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+    delete:
+      tags:
+        - cliente-controller
+      summary: Exclui um cliente
+      operationId: deleteUsingDELETE
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '204':
+          description: Excluido
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Cliente não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  /api/v1/pedidos:
+    post:
+      tags:
+        - pedido-controller
+      summary: Realiza um pedido
+      operationId: saveUsingPOST_1
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: dto
+          description: dto
+          required: true
+          schema:
+            $ref: '#/definitions/PedidoDTO'
+      responses:
+        '201':
+          description: Pedido realizado
+          schema:
+            type: integer
+            format: int32
+        '400':
+          description: Erro de validação
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  '/api/v1/pedidos/{id}':
+    get:
+      tags:
+        - pedido-controller
+      summary: Detalhes do pedido
+      operationId: getByIdUsingGET
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Ok
+          schema:
+            $ref: '#/definitions/InformacoesPedidoDTO'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Pedido não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+    patch:
+      tags:
+        - pedido-controller
+      summary: Atualiza status do pedido
+      operationId: updateStatusUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: dto
+          description: dto
+          required: true
+          schema:
+            $ref: '#/definitions/AtualizacaoStatusPedidoDTO'
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '204':
+          description: Atualizado
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Pedido não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  /api/v1/produtos:
+    get:
+      tags:
+        - produto-controller
+      summary: Lista todos os produtos
+      operationId: findUsingGET_1
+      produces:
+        - '*/*'
+      parameters:
+        - name: descricao
+          in: query
+          required: false
+          type: string
+        - name: id
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: preco
+          in: query
+          required: false
+          type: number
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Produto'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+    post:
+      tags:
+        - produto-controller
+      summary: Cadastra um produto
+      operationId: saveUsingPOST_2
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: produto
+          description: produto
+          required: true
+          schema:
+            $ref: '#/definitions/Produto'
+      responses:
+        '201':
+          description: Produto cadastrado
+          schema:
+            $ref: '#/definitions/Produto'
+        '400':
+          description: Erro de validação
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  '/api/v1/produtos/{id}':
+    get:
+      tags:
+        - produto-controller
+      summary: Obter detalhes de um produto
+      operationId: getByIdUsingGET_1
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: Produto encontrado
+          schema:
+            $ref: '#/definitions/Produto'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Produto não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+    put:
+      tags:
+        - produto-controller
+      summary: Altera os dados de um produto
+      operationId: updateUsingPUT_1
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+        - in: body
+          name: produto
+          description: produto
+          required: true
+          schema:
+            $ref: '#/definitions/Produto'
+      responses:
+        '204':
+          description: Atualizado
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Produto não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+    delete:
+      tags:
+        - produto-controller
+      summary: Exclui um produto
+      operationId: deleteUsingDELETE_1
+      produces:
+        - '*/*'
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+      responses:
+        '204':
+          description: Excluido
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+        '404':
+          description: Produto não encontrado para o ID informado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  /api/v1/usuarios:
+    post:
+      tags:
+        - usuario-controller
+      summary: Criar um usuário
+      operationId: salvarUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: usuario
+          description: usuario
+          required: true
+          schema:
+            $ref: '#/definitions/Usuario'
+      responses:
+        '201':
+          description: Usuário salvo com sucesso
+          schema:
+            $ref: '#/definitions/Usuario'
+        '400':
+          description: Erro de validação
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  /api/v1/usuarios/auth:
+    post:
+      tags:
+        - usuario-controller
+      summary: Autenticar um Usuario
+      operationId: autenticarUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: credenciais
+          description: credenciais
+          required: true
+          schema:
+            $ref: '#/definitions/CredenciaisDTO'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/TokenDTO'
+        '400':
+          description: Erro de validação
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  '/api/v1/usuarios/reset/{id}/{login}':
+    patch:
+      tags:
+        - usuario-controller
+      summary: Resetar senha do Usuario
+      operationId: resetaSenhaUsingPATCH
+      consumes:
+        - application/json
+      produces:
+        - '*/*'
+      parameters:
+        - in: body
+          name: dto
+          description: dto
+          required: true
+          schema:
+            $ref: '#/definitions/UsuarioResetaSenhaDTO'
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: integer
+          format: int32
+        - name: login
+          in: path
+          description: login
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+  /api/v1/usuarios/users:
+    get:
+      tags:
+        - usuario-controller
+      summary: Listar todos os Usuarios
+      operationId: findUsingGET_2
+      produces:
+        - '*/*'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Usuario'
+        '401':
+          description: Não autorizado
+        '403':
+          description: Token não autenticado
+      security:
+        - JWT:
+            - global
+      deprecated: false
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  AtualizacaoStatusPedidoDTO:
+    type: object
+    properties:
+      novoStatus:
+        type: string
+    title: AtualizacaoStatusPedidoDTO
+  Cliente:
+    type: object
+    properties:
+      cpf:
+        type: string
+      id:
+        type: integer
+        format: int32
+      nome:
+        type: string
+    title: Cliente
+  CredenciaisDTO:
+    type: object
+    properties:
+      login:
+        type: string
+      senha:
+        type: string
+    title: CredenciaisDTO
+  InformacaoItemPedidoDTO:
+    type: object
+    properties:
+      descricaoProduto:
+        type: string
+      precoUnitario:
+        type: number
+      quantidade:
+        type: integer
+        format: int32
+    title: InformacaoItemPedidoDTO
+  InformacoesPedidoDTO:
+    type: object
+    properties:
+      codigo:
+        type: integer
+        format: int32
+      cpf:
+        type: string
+      dataPedido:
+        type: string
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/InformacaoItemPedidoDTO'
+      nomeCliente:
+        type: string
+      status:
+        type: string
+      total:
+        type: number
+    title: InformacoesPedidoDTO
+  ItemPedidoDTO:
+    type: object
+    properties:
+      produto:
+        type: integer
+        format: int32
+      quantidade:
+        type: integer
+        format: int32
+    title: ItemPedidoDTO
+  PedidoDTO:
+    type: object
+    properties:
+      cliente:
+        type: integer
+        format: int32
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/ItemPedidoDTO'
+      total:
+        type: number
+    title: PedidoDTO
+  Produto:
+    type: object
+    properties:
+      descricao:
+        type: string
+      id:
+        type: integer
+        format: int32
+      preco:
+        type: number
+    title: Produto
+  TokenDTO:
+    type: object
+    properties:
+      login:
+        type: string
+      token:
+        type: string
+    title: TokenDTO
+  Usuario:
+    type: object
+    properties:
+      admin:
+        type: boolean
+      id:
+        type: integer
+        format: int32
+      login:
+        type: string
+      senha:
+        type: string
+    title: Usuario
+  UsuarioResetaSenhaDTO:
+    type: object
+    properties:
+      novaSenha:
+        type: string
+    title: UsuarioResetaSenhaDTO

@@ -39,11 +39,12 @@ public class UsuarioServiceImpl implements UserDetailsService {
         throw new SenhaInvalidaException();
     }
 
-    public Boolean loginIsValid(String loginUsuario){
-        repository.findByLogin(loginUsuario)
+    public Usuario loginIsValid(String loginUsuario){
+        Usuario usuario = repository.findByLogin(loginUsuario)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado na base de dados."));
-        return true;
-    }
+        return usuario;
+    }    
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

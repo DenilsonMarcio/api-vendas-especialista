@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -41,10 +42,10 @@ public class PedidoServiceImpl implements PedidoService {
                 .orElseThrow(() -> new RegraNegocioException("Código de cliente inválido."));
 
         Pedido pedido = new Pedido();
-        pedido.setTotal(dto.getTotal());
         pedido.setDataPedido(LocalDate.now());
         pedido.setCliente(cliente);
         pedido.setStatus(StatusPedido.REALIZADO);
+        pedido.setTotal(dto.getTotal());
 
         List<ItemPedido> itemsPedido = converterItems(pedido, dto.getItems());
         repository.save(pedido);
@@ -93,4 +94,14 @@ public class PedidoServiceImpl implements PedidoService {
                 }).collect(Collectors.toList());
 
     }
+
+    // TO DO METODO PARA FAZER A SOMA DO VALOR TOTAL DO PRODUTO.
+    public BigDecimal somaTotalPedido(Produto produto, ItemPedido itemPedido){
+        BigDecimal preco = produto.getPreco();
+        Integer quantidade = itemPedido.getQuantidade();
+        BigDecimal total = BigDecimal.valueOf(quantidade).multiply(preco);     
+        return total;
+        
+    }
+
 }
