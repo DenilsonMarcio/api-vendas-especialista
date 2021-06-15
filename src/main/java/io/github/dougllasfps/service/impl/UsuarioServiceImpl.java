@@ -1,19 +1,19 @@
 package io.github.dougllasfps.service.impl;
 
-import io.github.dougllasfps.domain.entity.Usuario;
-import io.github.dougllasfps.domain.repository.UsuarioRepository;
-import io.github.dougllasfps.exception.SenhaInvalidaException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.StringJoiner;
+import io.github.dougllasfps.domain.entity.Usuario;
+import io.github.dougllasfps.domain.repository.UsuarioRepository;
+import io.github.dougllasfps.exception.SenhaInvalidaException;
 
 @Service
 public class UsuarioServiceImpl implements UserDetailsService {
@@ -36,8 +36,13 @@ public class UsuarioServiceImpl implements UserDetailsService {
         if(senhasBatem){
             return user;
         }
-
         throw new SenhaInvalidaException();
+    }
+
+    public Boolean loginIsValid(String loginUsuario){
+        repository.findByLogin(loginUsuario)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado na base de dados."));
+        return true;
     }
 
     @Override
@@ -54,6 +59,10 @@ public class UsuarioServiceImpl implements UserDetailsService {
                 .password(usuario.getSenha())
                 .roles(roles)
                 .build();
+    }
+
+    public List<Usuario> listaUsuario() throws UsernameNotFoundException{
+        return repository.findAll();
     }
 
 }

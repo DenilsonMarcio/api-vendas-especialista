@@ -42,18 +42,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .passwordEncoder(passwordEncoder());
     }
 
+    // $2a$10$ZvSpUg44OQSKIfaL0lJvduGG1gFQiENoI1dscjk.nErGJQAgD4Y7a
+
     @Override
     protected void configure( HttpSecurity http ) throws Exception {
         http
             .csrf().disable()
             .authorizeRequests()
-                .antMatchers("/api/clientes/**")
+                .antMatchers("/api/v1/clientes/**")
                     .hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/pedidos/**")
+                .antMatchers("/api/v1/pedidos/**")
                     .hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/produtos/**")
+                .antMatchers("/api/v1/produtos/**")
                     .hasRole("ADMIN")
-                .antMatchers(HttpMethod.POST, "/api/usuarios/**")
+                .antMatchers("/api/v1/usuarios/users**")
+                    .hasRole("ADMIN")
+                .antMatchers(HttpMethod.PATCH, "/api/v1/usuarios/reset**")
+                    .hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/v1/usuarios/auth**")
+                    .permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/usuarios/**")
                     .permitAll()
                 .anyRequest().authenticated()
             .and()
@@ -61,7 +69,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
                 .addFilterBefore( jwtFilter(), UsernamePasswordAuthenticationFilter.class);
-        ;
     }
 
     @Override
