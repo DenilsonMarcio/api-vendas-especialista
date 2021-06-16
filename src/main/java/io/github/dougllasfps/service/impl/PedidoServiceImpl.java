@@ -1,5 +1,13 @@
 package io.github.dougllasfps.service.impl;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import io.github.dougllasfps.domain.entity.Cliente;
 import io.github.dougllasfps.domain.entity.ItemPedido;
 import io.github.dougllasfps.domain.entity.Pedido;
@@ -15,14 +23,6 @@ import io.github.dougllasfps.rest.dto.ItemPedidoDTO;
 import io.github.dougllasfps.rest.dto.PedidoDTO;
 import io.github.dougllasfps.service.PedidoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -93,15 +93,6 @@ public class PedidoServiceImpl implements PedidoService {
                     return itemPedido;
                 }).collect(Collectors.toList());
 
-    }
-
-    // TO DO METODO PARA FAZER A SOMA DO VALOR TOTAL DO PRODUTO.
-    public BigDecimal somaTotalPedido(Produto produto, ItemPedido itemPedido){
-        BigDecimal preco = produto.getPreco();
-        Integer quantidade = itemPedido.getQuantidade();
-        BigDecimal total = BigDecimal.valueOf(quantidade).multiply(preco);     
-        return total;
-        
     }
 
 }
